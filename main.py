@@ -8,6 +8,7 @@ from desire import Desire
 from button import LocationButtonSpot, ActorButtonSpot
 from career import Career, Role
 from clock import Time
+import event
 
 world = World()
 

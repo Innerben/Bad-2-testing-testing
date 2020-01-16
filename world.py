@@ -62,7 +62,7 @@ class World(object):
         actors = [actor for actor in self.entities[Actor].itervalues()]
         shuffle(actors)
         for actor in actors:
-            actor.handleInput()
+            actor.handleInput(self.clock)
             actor.update(self.clock)
         actors.sort(key=lambda actor: actor.id)
         for actor in actors:

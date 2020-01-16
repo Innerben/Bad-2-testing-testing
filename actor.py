@@ -5,6 +5,7 @@ from desire import Desires
 from statistic import Statistics
 from schedule import Schedule
 from clock import Time
+from event import Busy
 
 class Actor(GameEntity):
     
@@ -27,6 +28,7 @@ class Actor(GameEntity):
         self.desires = Desires()
         self.statistics = Statistics()
         self.schedule = Schedule()
+        self.eventHistory = list()
         self.career = None
         self.careerLevel = None
         self.state = self.needStates[None]
@@ -39,10 +41,10 @@ class Actor(GameEntity):
         self.career = self.findEntity(careerName)
         self.careerLevel = careerLevel
 
-    def hasWorkToday(self, dayOfWeek):
+    def getWorkHours(self, dayOfWeek):
         if self.career:
-            return self.career.isWorkDay(self, dayOfWeek)
-        return False
+            return self.career.getActorWorkHours(self, dayOfWeek)
+        return None
 
     def enter(self, location):
         self.exit()
@@ -52,7 +54,11 @@ class Actor(GameEntity):
         if self.location is not None:
             self.location.onExit(self)
 
-    def handleInput(self):
+    def handleInput(self, clock):
+        event = self.schedule.handleInput(self, clock)
+        if event is not None and event is not Busy:
+            self.eventHistory.insert(0, event)
+            event(self)
         state = self.state.handleInput(self, self.priorityNeed)
         if state is not None:
             self.state = state
@@ -62,7 +68,6 @@ class Actor(GameEntity):
         self.needs.update()
         self.state.update(self)
         self.statistics.update(self, self.state.description, 1)
-        self.schedule.execute(self, clock)
         if clock[Time.HOUR] == 1:
             self.schedule.update(self, clock.dayOfWeek)
 

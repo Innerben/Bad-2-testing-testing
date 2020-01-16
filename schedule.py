@@ -6,22 +6,34 @@ class Schedule(object):
     def __init__(self):
         self.events = dict()
 
-    def add(self, hour, event):
-        self.events[hour] = event
+    def isFree(self, startTime, endTime=None):
+        if endTime:
+            for hour in range(startTime, endTime+1):
+                if self.events.get(hour) is not None:
+                    return False
+        else:
+            return self.events.get(startTime) is None
+    
+    def add(self, hour, newEvent):
+        if self.isFree(hour):
+            self.events[hour] = newEvent
+
+    def addBlock(self, startTime, endTime, startEvent, endEvent):
+        self.add(startTime, startEvent)
+        self.add(endTime, endEvent)
+        for hour in range(startTime+1, endTime):
+            self.add(hour, event.Busy)
 
     def update(self, actor, dayOfWeek):
-        workTimes = actor.hasWorkToday(dayOfWeek)
+        self.events.clear()
+        workHours = actor.getWorkHours(dayOfWeek)
+        if workHours:
+            startTime = workHours[0]
+            endTime = workHours[1]
+            self.addBlock(startTime, endTime, event.GoToWork, event.LeaveWork)
 
-        if workTimes:
-            startTime = workTimes[0]
-            endTime = workTimes[1]
-            self.add(startTime, event.GoToWork)
-            self.add(endTime, event.LeaveWork)
-
-    def execute(self, actor, clock):
-        event = self.events.get(clock[Time.HOUR], None)
-        if event is not None:
-            event(actor)
+    def handleInput(self, actor, clock):
+        return self.events.get(clock[Time.HOUR], None)
 
     def __getitem__(self, hour):
         return self.events.get(hour, None)

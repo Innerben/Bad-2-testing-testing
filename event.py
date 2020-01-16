@@ -1,3 +1,6 @@
+def Busy(actor):
+    return
+
 def GoToWork(actor):
     actor.enter(actor.career.location)
 

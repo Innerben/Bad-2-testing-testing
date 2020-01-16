@@ -22,10 +22,10 @@ class Career(GameEntity):
             if role.name == title:
                 return role
 
-    def isWorkDay(self, actor, dayOfWeek):
+    def getActorWorkHours(self, actor, dayOfWeek):
         role = self.roles[actor.careerLevel]
         if dayOfWeek in role.weekends:
-            return False
+            return None
         return (role.startTime, role.endTime)
 
 class Role(object):
