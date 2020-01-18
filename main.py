@@ -106,3 +106,7 @@ world.addEntities(
 #Set Actor attributes
 world.findEntity('geo', store=True)
 world.storedEntity.setCareer(careerName='business', careerLevel=0)
+
+geo = world.findEntity('geo')
+tower = world.findEntity('tower')
+breakroom = tower.findRoom('breakroom')

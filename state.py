@@ -10,7 +10,8 @@ class ActorState(object):
         location = actor.location.parent.getRoom(actor, self.fulfill)
         if location:
             actor.enter(location)
-
+        
+            
     @abstractmethod
     def handleInput(self, actor, need):
         if not need:
@@ -89,10 +90,8 @@ class SocializeState(ActorState):
             if location.occupantCount(self.fulfill) > 0:
                 actor.enter(location)
                 return
-        if not locations:
-            print actor.name
-            print actor.state.description
-        actor.enter(choice(locations))
+        if locations:
+            actor.enter(choice(locations))
 
     def handleInput(self, actor, need):
         return super(SocializeState, self).handleInput(actor, need)

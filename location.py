@@ -24,7 +24,7 @@ class Location(GameEntity):
     def getRoom(self, actor, purpose):
         rooms = self.rooms.get(purpose)
         if rooms:
-            validRooms = [room for room in rooms if room.canEnter(actor, purpose)]
+            validRooms = [room for room in rooms if actor.canEnter(room, purpose)]
             if validRooms:
                 return choice(validRooms)
         return None
@@ -32,8 +32,8 @@ class Location(GameEntity):
     def getRooms(self, actor, purpose):
         rooms = self.rooms.get(purpose)
         if rooms:
-            return [room for room in rooms if room.canEnter(actor, purpose)]
-        return None
+            rooms = [room for room in rooms if actor.canEnter(room, purpose)]
+        return rooms
 
     def getRandomRoom(self):
         allRooms = []

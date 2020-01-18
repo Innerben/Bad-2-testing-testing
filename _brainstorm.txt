@@ -8,3 +8,5 @@ each update(), every actors scheduled event reference will be checked and an eve
 -actor -> constrain field stating which location(s) the actor may visit
 
 -Job, Date, etc. components provide event data to an actor's schedule component
+
+-rooms being incorrectly flagged as full -> possibly due to the way occupantCount/max are being checked

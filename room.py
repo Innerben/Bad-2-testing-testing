@@ -22,7 +22,7 @@ class Room(GameEntity):
             purposes.add(spot.requiredState)
         return purposes
 
-    def occupantCount(self, purpose = None):
+    def occupantCount(self, purpose=None, actor=None):
         if not purpose:
             return len(self.occupants)
         count = 0
@@ -33,15 +33,6 @@ class Room(GameEntity):
 
     def occupantMax(self, purpose = None):
         return self.buttonSpots.actorSlotCount(purpose)
-
-    def canEnter(self, actor, purpose = None):
-        allowed = self.isOccupantAllowed(actor)
-        locked = self.locked
-        full = self.isFull(purpose)
-
-        if allowed and not locked and not full:
-            return True
-        return False
 
     def isOccupantAllowed(self, actor):
         public = not self.parent.allowedOccupants

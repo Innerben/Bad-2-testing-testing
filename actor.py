@@ -23,7 +23,7 @@ class Actor(GameEntity):
         room = location.findRoom(roomName)
         location.allowedOccupants.add(self)
         self.location = room
-        self.home = room
+        self.home = location
         self.needs = Needs()
         self.desires = Desires()
         self.statistics = Statistics()
@@ -46,6 +46,15 @@ class Actor(GameEntity):
             return self.career.getActorWorkHours(self, dayOfWeek)
         return None
 
+    def canEnter(self, room, purpose = None):
+        allowed = room.isOccupantAllowed(self)
+        locked = room.locked
+        full = room.isFull(purpose)
+
+        if allowed and not locked and not full:
+            return True
+        return False
+
     def enter(self, location):
         self.exit()
         location.onEnter(self)
@@ -58,6 +67,7 @@ class Actor(GameEntity):
         event = self.schedule.handleInput(self, clock)
         if event is not None and event is not Busy:
             self.eventHistory.insert(0, event)
+            self.eventHistory = self.eventHistory[0:6]
             event(self)
         state = self.state.handleInput(self, self.priorityNeed)
         if state is not None:
