@@ -10,12 +10,12 @@ class ActorState(object):
         location = actor.location.parent.getRoom(actor, self.fulfill)
         if location:
             actor.enter(location)
-        
-            
+
     @abstractmethod
     def handleInput(self, actor, need):
         if not need:
             return actor.needStates[None]
+            #add logic to handle desires
         if need.value > self.fulfill.value:
             return actor.needStates[need]
         if actor.needs[self.fulfill].value == 100:

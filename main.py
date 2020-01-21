@@ -1,88 +1,96 @@
 from world import World
-from entity import GameEntity
+from entity import Entity
 from actor import Actor
 from room import Room
 from location import Location
 from need import Need
 from desire import Desire
-from button import LocationButtonSpot, ActorButtonSpot
+from button import LocationSpot, ActorSpot
 from career import Career, Role
 from clock import Time
 import event
 
 world = World()
 
-GameEntity.setFindEntityDelegate(world.findEntity)
+Entity.findEntityDelegate = world.findEntity
+Entity.addEntitiesDelegate = world.addEntities
+Entity.isPlayerDelegate = world.isPlayer
 
 #Add Locations
 world.addEntities(
 
     Location(name='apartment1').addRooms(
         Room(name='bedroom').addButtonSpots(
-            LocationButtonSpot(100, 100, 'apartment1', 'livingroom'),
-            ActorButtonSpot(0, 0),
-            ActorButtonSpot(1, 0, Need.ENERGY),
+            LocationSpot(100, 100, destination=('apartment1','livingroom')),
+            ActorSpot(0, 0),
+            ActorSpot(1, 0, Need.ENERGY),
         ),
         Room('kitchen').addButtonSpots(
-            ActorButtonSpot(0, 0, Need.HUNGER),
+            ActorSpot(0, 0, Need.HUNGER),
         ),
         Room('bathroom').addButtonSpots(
-            ActorButtonSpot(0, 0, Need.HYGIENE),
+            ActorSpot(0, 0, Need.HYGIENE),
         ),
         Room('livingroom').addButtonSpots(
-            ActorButtonSpot(0, 0, Need.SOCIAL),
-            ActorButtonSpot(0, 1, Need.SOCIAL),
-            ActorButtonSpot(0, 2, Need.SOCIAL),
-            ActorButtonSpot(0, 3, Need.SOCIAL),
+            ActorSpot(0, 0, Need.SOCIAL),
+            ActorSpot(0, 1, Need.SOCIAL),
+            ActorSpot(0, 2, Need.SOCIAL),
+            ActorSpot(0, 3, Need.SOCIAL),
         ),
     ),
 
     Location('apartment2').addRooms(
         Room('bedroom').addButtonSpots(
-            LocationButtonSpot('apartment1', 'livingroom', 100, 100),
-            ActorButtonSpot(0, 0),
-            ActorButtonSpot(1, 0, Need.ENERGY),
+            LocationSpot(100, 100, destination=('apartment1','livingroom')),
+            ActorSpot(0, 0),
+            ActorSpot(1, 0, Need.ENERGY),
         ),
         Room('kitchen').addButtonSpots(
-            ActorButtonSpot(0, 0, Need.HUNGER),
+            ActorSpot(0, 0, Need.HUNGER),
         ),
         Room('bathroom').addButtonSpots(
-            ActorButtonSpot(0, 0, Need.HYGIENE),
+            ActorSpot(0, 0, Need.HYGIENE),
         ),
         Room('livingroom').addButtonSpots(
-            ActorButtonSpot(0, 0, Need.SOCIAL),
-            ActorButtonSpot(0, 1, Need.SOCIAL),
-            ActorButtonSpot(0, 2, Need.SOCIAL),
-            ActorButtonSpot(0, 3, Need.SOCIAL),
+            ActorSpot(0, 0, Need.SOCIAL),
+            ActorSpot(0, 1, Need.SOCIAL),
+            ActorSpot(0, 2, Need.SOCIAL),
+            ActorSpot(0, 3, Need.SOCIAL),
         ),
     ),
 
     Location('tower').addRooms(
         Room('office'),
         Room('breakroom').addButtonSpots(
-            ActorButtonSpot(0, 0, Need.HUNGER),
-            ActorButtonSpot(0, 0, Need.SOCIAL),
+            ActorSpot(0, 0, Need.HUNGER),
+            ActorSpot(0, 0, Need.SOCIAL),
         ),
         Room('bathroom').addButtonSpots(
-            ActorButtonSpot(0, 0, Need.HYGIENE),
+            ActorSpot(0, 0, Need.HYGIENE),
         ),
     ),
 
     Location('gym').addRooms(
         Room('weights').addButtonSpots(
-            ActorButtonSpot(0, 0, Desire.PHYSIQUE)
+            ActorSpot(0, 0, Desire.PHYSIQUE)
         ),
         Room('yoga').addButtonSpots(
-            ActorButtonSpot(0, 0, Desire.PHYSIQUE)
+            ActorSpot(0, 0, Desire.PHYSIQUE)
         ),
         Room('snack bar').addButtonSpots(
-            ActorButtonSpot(0, 0, Need.HUNGER)
+            ActorSpot(0, 0, Need.HUNGER)
         ),
         Room('sauna').addButtonSpots(
-            ActorButtonSpot(0, 0, Need.HYGIENE)
+            ActorSpot(0, 0, Need.HYGIENE)
         ),
     ),
 )
+
+#Set LocationButton destination references
+for locationButton in world.entities[LocationSpot].itervalues():
+    locationName = locationButton.destination[0]
+    roomName = locationButton.destination[1]
+    locationButton.setDestination(locationName, roomName)
 
 #Add Careers
 world.addEntities(
@@ -107,6 +115,5 @@ world.addEntities(
 world.findEntity('geo', store=True)
 world.storedEntity.setCareer(careerName='business', careerLevel=0)
 
-geo = world.findEntity('geo')
-tower = world.findEntity('tower')
-breakroom = tower.findRoom('breakroom')
+#Set player
+world.setPlayer(world.findEntity('geo'))

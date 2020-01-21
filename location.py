@@ -1,7 +1,7 @@
-from entity import GameEntity
+from entity import Entity
 from random import choice
 
-class Location(GameEntity):
+class Location(Entity):
 
     def __init__(self, name):
         super(Location, self).__init__(name)
@@ -19,6 +19,7 @@ class Location(GameEntity):
                 if not self.rooms.get(None):
                     self.rooms[None] = []
                 self.rooms[None].append(room)
+        self.addEntities(*rooms)
         return self
 
     def getRoom(self, actor, purpose):

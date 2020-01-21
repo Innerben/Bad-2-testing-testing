@@ -12,6 +12,12 @@ class World(object):
         self.clock = Clock()
         self.player = None
 
+    def setPlayer(self, actor):
+        self.player = actor
+
+    def isPlayer(self, entity):
+        return entity is self.player
+
     def addEntities(self, *entities):
         for entity in entities:
             if not type(entity) in self.entities:
@@ -21,32 +27,32 @@ class World(object):
             entity.world = self
             self.entityId += 1
 
-    def findEntity(self, value, attr='name', type=None, store=False):
-        foundEntity = None
+    def findEntity(self, value, parentValue=None, attr='name', type=None, store=False):
+        foundEntity = list()
+
         if type:
             for entity in self.entities[type].itervalues():
                 if getattr(entity, attr, None) == value:
-                    foundEntity = entity
+                    foundEntity.append(entity)
         else:
             for entityType in self.entities.itervalues():
                 for entity in entityType.itervalues():
                     if getattr(entity, attr, None) == value:
-                        foundEntity = entity
+                        foundEntity.append(entity)
         if not foundEntity:
             print "'{}' not found in {}".format(value, self)
+            return
+        if len(foundEntity) == 1:
+            foundEntity = foundEntity[0]
+        elif parentValue:
+            for entity in foundEntity:
+                if getattr(entity.parent, attr, None) == parentValue:
+                    foundEntity = entity
+        elif len(foundEntity) > 1:
+            print "found multiple entities with '{}': '{}', returning list".format(attr, value)
         if store:
             self.storedEntity = foundEntity
         return foundEntity
-
-    def getRoom(self, purpose):
-        locations = [self.entities[Location].itervalues()]
-        shuffle(locations)
-        for location in locations:
-            rooms = location.rooms.get(purpose)
-            if rooms:
-                availableRooms = [room for room in rooms if not room.isFull(purpose)]
-                if availableRooms:
-                    return choice(availableRooms)
 
     def update(self, hours=1):
         for hour in range(hours):

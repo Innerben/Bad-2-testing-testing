@@ -1,4 +1,4 @@
-from entity import GameEntity
+from entity import Entity
 from state import IdleState, SleepState, EatState, BatheState, SocializeState
 from need import Need, Needs
 from desire import Desires
@@ -7,7 +7,7 @@ from schedule import Schedule
 from clock import Time
 from event import Busy
 
-class Actor(GameEntity):
+class Actor(Entity):
     
     needStates = {
         Need.ENERGY:    SleepState(),
@@ -64,6 +64,9 @@ class Actor(GameEntity):
             self.location.onExit(self)
 
     def handleInput(self, clock):
+        if self.isPlayer():
+            Player.handleInput(self)
+            return
         event = self.schedule.handleInput(self, clock)
         if event is not None and event is not Busy:
             self.eventHistory.insert(0, event)
@@ -83,3 +86,9 @@ class Actor(GameEntity):
 
     def onClick(self):
         print "{} clicked".format(self.name)
+
+class Player(object):
+
+    @classmethod
+    def handleInput(cls, actor):
+        pass

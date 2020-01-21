@@ -1,3 +1,5 @@
+from entity import Entity
+
 class ButtonSpotList(object):
     
     def __init__(self):
@@ -39,26 +41,29 @@ class ButtonSpotList(object):
             return len(self.spots)
         count = 0
         for spot in self.spots:
-            if spot.requiredState == state:
+            if spot.criteria == state:
                 count += 1
         return count
 
-class ButtonSpot(object):
+class ButtonSpot(Entity):
 
     def __init__(self, xpos, ypos):
         self.xpos = xpos
         self.ypos = ypos
         self.returnObject = None
-        self.requiredState = None
+        self.criteria = None
         self.enabled = False
 
-class LocationButtonSpot(ButtonSpot):
+class LocationSpot(ButtonSpot):
 
-    def __init__(self, xpos, ypos, locationName, roomName):
-        super(LocationButtonSpot, self).__init__(xpos, ypos)
-        self.destinationName = (locationName, roomName)
+    def __init__(self, xpos, ypos, destination):
+        super(LocationSpot, self).__init__(xpos, ypos)
+        self.destination = destination
         self.returnObject = None
         self.enabled = True
+
+    def setDestination(self, locationName, roomName):
+        self.destination = self.findEntity(locationName).findRoom(roomName)
 
     def update(self, location):
         pass
@@ -66,15 +71,15 @@ class LocationButtonSpot(ButtonSpot):
     def reset(self):
         pass
 
-class ActorButtonSpot(ButtonSpot):
+class ActorSpot(ButtonSpot):
 
     def __init__(self, xpos, ypos, actorState = None):
-        super(ActorButtonSpot, self).__init__(xpos, ypos)
-        self.requiredState = actorState
+        super(ActorSpot, self).__init__(xpos, ypos)
+        self.criteria = actorState
         
     def update(self, actorObject):
         spotFound = False
-        if not self.enabled and actorObject.state.fulfill == self.requiredState:
+        if not self.enabled and actorObject.state.fulfill == self.criteria:
             spotFound = True
             self.enabled = True
             self.returnObject = actorObject

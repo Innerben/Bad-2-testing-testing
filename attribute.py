@@ -52,3 +52,8 @@ class AttributeGroup(object):
             stringArray.append(str(attribute.value))
             stringArray.append('|')
         return "".join(stringArray)
+
+class Modifier(object):
+
+    def __init__(attributeName, multiplier):
+        self.multiply

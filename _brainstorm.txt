@@ -1,12 +1,4 @@
--sometimes SocializeState.onEnter "locations" local variable is None
-
--scheduled events (time-based) could be a data struct that is referenced by each actor containing fields such as:
-    -trigger time
-    -location to enter
-each update(), every actors scheduled event reference will be checked and an event triggered if the current game time matches the event's trigger time
-
 -actor -> constrain field stating which location(s) the actor may visit
 
 -Job, Date, etc. components provide event data to an actor's schedule component
 
--rooms being incorrectly flagged as full -> possibly due to the way occupantCount/max are being checked

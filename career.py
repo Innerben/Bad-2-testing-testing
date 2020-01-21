@@ -1,7 +1,7 @@
-from entity import GameEntity
+from entity import Entity
 from clock import Time, Day
 
-class Career(GameEntity):
+class Career(Entity):
 
     def __init__(self, name, location):
         super(Career, self).__init__(name)
